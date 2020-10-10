@@ -19,7 +19,7 @@ export default {
     ]
   },
   router: {
-    base: '/'
+    base: '/speech2word'
   },
   // generate: {
   //   dir: 'docs'
@@ -95,5 +95,8 @@ export default {
   // Build Configuration (https://go.nuxtjs.dev/config-build)
   build: {
     vendor: ['axios']
+  },
+  generate: {
+    dir: 'docs'
   }
 }
