@@ -1880,6 +1880,11 @@ atob@^2.1.2:
   resolved "https://registry.yarnpkg.com/atob/-/atob-2.1.2.tgz#6d9517eb9e030d2436666651e86bd9f6f13533c9"
   integrity sha512-Wm6ukoaOGJi/73p/cl2GvLjTI5JM1k/O14isD73YML8StrH/7/lRFgmg8nICZgD3bZZvjwCGxtMOD3wWNAu8cg==
 
+audiobuffer-to-wav@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.npm.taobao.org/audiobuffer-to-wav/download/audiobuffer-to-wav-1.0.0.tgz#d5b432271455e7fee56b111cd0f8d620d7f9e105"
+  integrity sha1-1bQyJxRV5/7laxEc0PjWINf54QU=
+
 autoprefixer@^9.6.1:
   version "9.8.6"
   resolved "https://registry.yarnpkg.com/autoprefixer/-/autoprefixer-9.8.6.tgz#3b73594ca1bf9266320c5acf1588d74dea74210f"
@@ -3161,6 +3166,13 @@ doctrine@^3.0.0:
   dependencies:
     esutils "^2.0.2"
 
+docxtemplater@^3.19.5:
+  version "3.19.5"
+  resolved "https://registry.npm.taobao.org/docxtemplater/download/docxtemplater-3.19.5.tgz#5c695ad0c28ad6bfd22504b7d33e4ff2a9e54081"
+  integrity sha1-XGla0MKK1r/SJQS30z5P8qnlQIE=
+  dependencies:
+    xmldom "^0.3.0"
+
 dom-converter@^0.2:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/dom-converter/-/dom-converter-0.2.0.tgz#6721a9daee2e293682955b6afe416771627bb768"
@@ -3905,6 +3917,11 @@ file-loader@^4.0.0, file-loader@^4.3.0:
   dependencies:
     loader-utils "^1.2.3"
     schema-utils "^2.5.0"
+
+file-saver@^2.0.2:
+  version "2.0.2"
+  resolved "https://registry.npm.taobao.org/file-saver/download/file-saver-2.0.2.tgz#06d6e728a9ea2df2cce2f8d9e84dfcdc338ec17a"
+  integrity sha1-BtbnKKnqLfLM4vjZ6E383DOOwXo=
 
 file-uri-to-path@1.0.0:
   version "1.0.0"
@@ -5024,6 +5041,11 @@ jsonfile@^4.0.0:
   optionalDependencies:
     graceful-fs "^4.1.6"
 
+jszip-utils@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.npm.taobao.org/jszip-utils/download/jszip-utils-0.1.0.tgz#8c04cdedcdb291e83f055f5b261b3a3188ceca0b"
+  integrity sha1-jATN7c2ykeg/BV9bJhs6MYjOygs=
+
 kind-of@^3.0.2, kind-of@^3.0.3, kind-of@^3.2.0:
   version "3.2.2"
   resolved "https://registry.yarnpkg.com/kind-of/-/kind-of-3.2.2.tgz#31ea21a734bab9bbb0f32466d893aea51e4a3c64"
@@ -5950,7 +5972,7 @@ p-try@^2.0.0:
   resolved "https://registry.yarnpkg.com/p-try/-/p-try-2.2.0.tgz#cb2868540e313d61de58fafbe35ce9004d5540e6"
   integrity sha512-R4nPAVTAU0B9D35/Gk3uJf/7XYbQcyohSKdvAxIRSNghFl4e71hVoGnBNQz9cWaXxO2I10KTC+3jMdvvoKw6dQ==
 
-pako@~1.0.5:
+pako@~1.0.2, pako@~1.0.5:
   version "1.0.11"
   resolved "https://registry.yarnpkg.com/pako/-/pako-1.0.11.tgz#6c9599d340d54dfd3946380252a35705a6b992bf"
   integrity sha512-4hLB8Py4zZce5s4yd9XzopqwVv/yGNhV1Bl8NTmCq1763HeK2+EwVTv+leGeL13Dnh2wfbqowVPXCIO0z4taYw==
@@ -6148,6 +6170,13 @@ pify@^4.0.1:
   version "4.0.1"
   resolved "https://registry.yarnpkg.com/pify/-/pify-4.0.1.tgz#4b2cd25c50d598735c50292224fd8c6df41e3231"
   integrity sha512-uB80kBFb/tfd68bVleG9T5GGsGPjJrLAUpR5PZIrhBnIaRTQRjqdJSsIKkOP6OAIFbj7GOrcudc5pNjZ+geV2g==
+
+pizzip@^3.0.6:
+  version "3.0.6"
+  resolved "https://registry.npm.taobao.org/pizzip/download/pizzip-3.0.6.tgz#223485511f9e23abbb2888fd67734e12fc7861a8"
+  integrity sha1-IjSFUR+eI6u7KIj9Z3NOEvx4Yag=
+  dependencies:
+    pako "~1.0.2"
 
 pkg-dir@^2.0.0:
   version "2.0.0"
@@ -8734,6 +8763,11 @@ ws@^6.0.0:
   integrity sha512-GIyAXC2cB7LjvpgMt9EKS2ldqr0MTrORaleiOno6TweZ6r3TKtoFQWay/2PceJ3RuBasOHzXNn5Lrw1X0bEjqA==
   dependencies:
     async-limiter "~1.0.0"
+
+xmldom@^0.3.0:
+  version "0.3.0"
+  resolved "https://registry.npm.taobao.org/xmldom/download/xmldom-0.3.0.tgz#e625457f4300b5df9c2e1ecb776147ece47f3e5a"
+  integrity sha1-5iVFf0MAtd+cLh7Ld2FH7OR/Plo=
 
 xtend@^4.0.0, xtend@~4.0.1:
   version "4.0.2"

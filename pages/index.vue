@@ -1,89 +1,407 @@
 <template>
-  <v-row justify="center" align="center">
-    <v-col cols="12" sm="8" md="6">
-      <div class="text-center">
-        <logo />
-        <vuetify-logo />
-      </div>
-      <v-card>
-        <v-card-title class="headline">
-          Welcome to the Vuetify + Nuxt.js template
-        </v-card-title>
-        <v-card-text>
-          <p>Vuetify is a progressive Material Design component framework for Vue.js. It was designed to empower developers to create amazing applications.</p>
-          <p>
-            For more information on Vuetify, check out the <a
-              href="https://vuetifyjs.com"
-              target="_blank"
-              rel="noopener noreferrer"
+  <v-container>
+    <v-row>
+      <v-col>
+        <v-sheet
+          min-height="80vh"
+          rounded="lg"
+        >
+          <v-row align="center" justify="center" class="pt-12">
+            <v-spacer />
+            <v-col cols="4" style="min-width: 230px">
+              <v-file-input
+                v-model="audioFile"
+                chips
+                show-size
+                truncate-length="10"
+                label="请输入音频文件"
+                prepend-icon="mdi-music-clef-treble"
+              />
+            </v-col>
+            <v-col cols="4">
+              <v-row>
+                <v-col>
+                  <v-btn
+                    rounded
+                    outlined
+                    color="grey darken-1"
+                    dark
+                    @click="transformAudio"
+                  >
+                    转换
+                  </v-btn>
+                </v-col>
+                <v-col>
+                  <v-btn
+                    rounded
+                    color="grey darken-1"
+                    dark
+                    @click="expertDoc"
+                  >
+                    导出
+                  </v-btn>
+                </v-col>
+              </v-row>
+            </v-col>
+          </v-row>
+          <v-row v-for="(at, index) in audioAndText" :key="index" justify="center" align="center">
+            <v-col cols="2">
+              <v-row class="pr-10" justify="end">
+                <v-icon v-if="at.source_play.play == 0" @click="playAudio(at.source_play)">
+                  mdi-play
+                </v-icon>
+                <v-icon v-else @click="stopAudio(at.source_play)">
+                  mdi-pause-circle-outline
+                </v-icon>
+              </v-row>
+            </v-col>
+            <v-col cols="6">
+              <v-textarea
+                v-model="audioAndText[index].text"
+                rows="2"
+                auto-grow
+              />
+              <!--              <v-textarea v-model="audioAndText[index].text" ></v-textarea>-->
+            </v-col>
+            <v-col cols="2">
+              <v-icon v-if="!audioAndText[index].text" color="red">
+                mdi-close
+              </v-icon>
+              <v-icon v-else color="green">
+                mdi-check
+              </v-icon>
+              <v-chip v-if="!audioAndText[index].text" @click="postBaiduApi(at)">
+                重转
+              </v-chip>
+              <span v-else>
+                完成
+              </span>
+            </v-col>
+          </v-row>
+        </v-sheet>
+      </v-col>
+    </v-row>
+    <v-row justify="center">
+      <v-dialog
+        v-model="transformCheck"
+        persistent
+        max-width="290"
+      >
+        <v-card>
+          <v-card-title class="title">
+            请先输入音频文件再转换
+          </v-card-title>
+
+          <v-card-actions>
+            <v-spacer />
+
+            <v-btn
+              color="green darken-1"
+              text
+              @click="transformCheck = false"
             >
-              documentation
-            </a>.
-          </p>
-          <p>
-            If you have questions, please join the official <a
-              href="https://chat.vuetifyjs.com/"
-              target="_blank"
-              rel="noopener noreferrer"
-              title="chat"
+              确定
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+    </v-row>
+    <v-row justify="center">
+      <v-dialog
+        v-model="exportCheck"
+        persistent
+        max-width="290"
+      >
+        <v-card>
+          <v-card-title class="title">
+            请先转换完成再导出
+          </v-card-title>
+
+          <v-card-actions>
+            <v-spacer />
+
+            <v-btn
+              color="green darken-1"
+              text
+              @click="exportCheck = false"
             >
-              discord
-            </a>.
-          </p>
-          <p>
-            Find a bug? Report it on the github <a
-              href="https://github.com/vuetifyjs/vuetify/issues"
-              target="_blank"
-              rel="noopener noreferrer"
-              title="contribute"
-            >
-              issue board
-            </a>.
-          </p>
-          <p>Thank you for developing with Vuetify and I look forward to bringing more exciting features in the future.</p>
-          <div class="text-xs-right">
-            <em><small>&mdash; John Leider</small></em>
-          </div>
-          <hr class="my-3">
-          <a
-            href="https://nuxtjs.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Nuxt Documentation
-          </a>
-          <br>
-          <a
-            href="https://github.com/nuxt/nuxt.js"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Nuxt GitHub
-          </a>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer />
-          <v-btn
-            color="primary"
-            nuxt
-            to="/inspire"
-          >
-            Continue
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-col>
-  </v-row>
+              确定
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+    </v-row>
+  </v-container>
 </template>
 
 <script>
-import Logo from '~/components/Logo.vue'
-import VuetifyLogo from '~/components/VuetifyLogo.vue'
-
+import audioBufferToWav from 'audiobuffer-to-wav'
+import * as Docxtemplater from 'docxtemplater'
+import PizZip from 'pizzip'
+import JSZipUtils from 'jszip-utils'
+import { saveAs } from 'file-saver'
 export default {
-  components: {
-    Logo,
-    VuetifyLogo
+  data: () => ({
+    audioFile: null,
+    audioAndText: [],
+    sourcePlay: null,
+    audioCtxPlay: null,
+    transformCheck: false,
+    exportCheck: false,
+    token: '24.7c7a79f50db25a9f698ef586ca9891b5.2592000.1604662511.282335-22787298'
+  }),
+  mounted () {
+    this.audioCtxPlay = new AudioContext()
+    // 创建AudioBufferSourceNode对象
+    this.sourcePlay = this.audioCtxPlay.createBufferSource()
+    // 创建AudioBufferSourceNode对象
+    // const source = audioCtx.createBufferSource()
+    // this.$axios
+    //   .post('/token', {
+    //     grant_type: 'client_credentials',
+    //     client_id: 'cCUwhUDGXgtH33IXBDRUqdf7',
+    //     client_secret: 'GBVjAGEhKID1SMWmmPvRcMzcL4mkGuSY'
+    //   })
+    //   .then((res) => {
+    //     this.token = res
+    //     console.log('token: ', this.token)
+    //   })
+    //   .catch((err) => {
+    //     console.log(err)
+    //   })
+    // 设置APPID/AK/SK
+    // const APP_ID = '22787298'
+    // const API_KEY = 'cCUwhUDGXgtH33IXBDRUqdf7'
+    // const SECRET_KEY = 'GBVjAGEhKID1SMWmmPvRcMzcL4mkGuSY'
+    // 新建一个对象，建议只保存一个对象调用服务接口
+    // this.client = new AipSpeechClient(APP_ID, API_KEY, SECRET_KEY)
+  },
+  methods: {
+    expertDoc () {
+      let flag = true
+      for (let i = 0; i < this.audioAndText; i++) {
+        if (this.audioAndText[i].text) {
+          flag = false
+        }
+      }
+      if (!this.audioAndText.length) {
+        flag = false
+      }
+      this.exportCheck = !flag
+      if (this.exportCheck) {
+        return
+      }
+      const that = this
+      // 读取并获得模板文件的二进制内容
+      JSZipUtils.getBinaryContent('/speechToDocx.docx', function (error, content) {
+        // model.docx是模板。我们在导出的时候，会根据此模板来导出对应的数据
+        // 抛出异常
+        if (error) {
+          throw error
+        }
+
+        // 创建一个PizZip实例，内容为模板的内容
+        const zip = new PizZip(content)
+        // 创建并加载docxtemplater实例对象
+        const doc = new Docxtemplater().loadZip(zip)
+        let text = ''
+        for (let i = 0; i < that.audioAndText.length; i++) {
+          text += that.audioAndText[i].text
+        }
+        // 设置模板变量的值
+        doc.setData({
+          title: that.audioFile.name,
+          content: text
+        })
+
+        try {
+          // 用模板变量的值替换所有模板变量
+          doc.render()
+        } catch (error) {
+          // 抛出异常
+          const e = {
+            message: error.message,
+            name: error.name,
+            stack: error.stack,
+            properties: error.properties
+          }
+          console.log(JSON.stringify({ error: e }))
+          throw error
+        }
+
+        // 生成一个代表docxtemplater对象的zip文件（不是一个真实的文件，而是在内存中的表示）
+        const out = doc.getZip().generate({
+          type: 'blob',
+          mimeType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+        })
+        // 将目标文件对象保存为目标类型的文件，并命名
+        saveAs(out, '语音转文本.docx')
+      })
+    },
+    transformAudio () {
+      this.transformCheck = !this.audioFile
+      if (this.transformCheck) {
+        return
+      }
+      this.getFile()
+    },
+    playAudio (sp) {
+      for (let i = 0; i < this.audioAndText.length; i++) {
+        const at = this.audioAndText[i]
+        // console.log('状态：', at.source_play.play)
+        if (at.source_play.play) {
+          at.source_play.context.suspend()
+          at.source_play.play = 0
+        }
+      }
+      sp.play = 1
+      if (sp.context.state === 'suspended') {
+        sp.context.resume()
+        return
+      }
+      sp.source.start()
+    },
+    stopAudio (sp) {
+      // sp.source.pause()
+      sp.context.suspend()
+      sp.play = 0
+    },
+    transformArrayBufferToBase64 (buffer) {
+      let binary = ''
+      const bytes = new Uint8Array(buffer)
+      for (let len = bytes.byteLength, i = 0; i < len; i++) {
+        binary += String.fromCharCode(bytes[i])
+      }
+      return window.btoa(binary)
+    },
+    postBaiduApi (audioAndText) {
+      const config = {
+        headers: { 'Content-Type': 'audio/wav;rate=16000' }
+      }
+      const payload = JSON.stringify({
+        format: 'wav',
+        rate: 16000,
+        channel: 1,
+        cuid: 'a6:83:e7:5a:57:64',
+        speech: audioAndText.audio,
+        len: audioAndText.length,
+        dev_pid: 1537,
+        token: '24.7c7a79f50db25a9f698ef586ca9891b5.2592000.1604662511.282335-22787298'
+      })
+      this.$axios
+        .post('/transform', payload, config)
+        .then((res) => {
+          // eslint-disable-next-line eqeqeq
+          if (res.status == '200') {
+            // console.log('success, ', res.data.result)
+            audioAndText.text = res.data.result
+            if (!res.data.result) {
+              // console.log(res)
+            }
+          } else {
+            // console.log(res)
+          }
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+    },
+    getFile () {
+      const fr = new FileReader()
+      let arrBuffer = null
+      let audioBuffer = null
+      const that = this
+      fr.addEventListener('load', (event) => {
+        arrBuffer = event.target.result
+        // console.log(arrBuffer)
+        const audioCtx = new AudioContext()
+        // 创建AudioBufferSourceNode对象
+        // this.source = audioCtx.createBufferSource()
+        audioCtx.decodeAudioData(arrBuffer, function (audioBuf) {
+          audioBuffer = audioBuf
+          // 声道数量和采样率
+          const channels = audioBuffer.numberOfChannels
+          const rate = audioBuffer.sampleRate
+          const totalLength = audioBuf.length
+          // console.log('audioBuffer:', audioBuffer)
+          // console.log('channel: ', channels)
+          // console.log('rate:', rate, 'hz')
+          // console.log('length: ', totalLength)
+          let startOffset = 0
+          let endOffset = rate * 50
+          while (endOffset <= totalLength && startOffset < endOffset) {
+            // 3秒对应的帧数
+            const frameCount = endOffset - startOffset
+            // 创建同样采用率、同样声道数量，长度是前3秒的空的AudioBuffer
+            const audioCtx2 = new AudioContext()
+            // console.log(startOffset, endOffset)
+            const newAudioBuffer = audioCtx2.createBuffer(channels, endOffset - startOffset, rate)
+            // 创建临时的Array存放复制的buffer数据
+            const anotherArray = new Float32Array(frameCount)
+            // 声道的数据的复制和写入
+            const offset = 0
+            for (let channel = 0; channel < channels; channel++) {
+              audioBuffer.copyFromChannel(anotherArray, channel, startOffset)
+              newAudioBuffer.copyToChannel(anotherArray, channel, offset)
+            }
+            const offlineCtx = new OfflineAudioContext(1, 16000 * 50, 16000)
+            const source2 = offlineCtx.createBufferSource()
+            source2.buffer = newAudioBuffer
+            source2.connect(offlineCtx.destination)
+            source2.start()
+            // source.loop = true;
+            offlineCtx.startRendering().then(function (renderedBuffer) {
+              // renderedBuffer;
+              // 设置AudioBufferSourceNode对象的buffer为复制的n秒AudioBuffer对象
+              const wav = audioBufferToWav(renderedBuffer)
+              const sph = that.transformArrayBufferToBase64(wav)
+              const audioCtxPlay = new AudioContext()
+              // 创建AudioBufferSourceNode对象
+              const sourcePlay = audioCtxPlay.createBufferSource()
+              sourcePlay.buffer = newAudioBuffer
+              // 这里直接结束，实际上可以对结束做一些特效处理
+              sourcePlay.connect(audioCtxPlay.destination)
+              // 资源开始播放
+              // sourcePlay.start()
+              that.audioAndText.push({
+                audio: sph,
+                source_play: {
+                  context: audioCtxPlay,
+                  source: sourcePlay,
+                  play: 0
+                },
+                text: null,
+                length: wav.byteLength
+              })
+              that.postBaiduApi(that.audioAndText[that.audioAndText.length - 1])
+              // console.log('wav', wav)
+              // source.buffer = renderedBuffer
+              // console.log('renderedBuffer: ', renderedBuffer)
+              // // 这一句是必须的，表示结束，没有这一句没法播放，没有声音
+              // // 这里直接结束，实际上可以对结束做一些特效处理
+              // source.connect(audioCtx.destination)
+              // // 资源开始播放
+              // source.start()
+            }).catch(function (err) {
+              console.log('失败: ' + err)
+              // 注意: 当 OfflineAudioContext 上 startRendering 被立刻调用，Promise 应该被 reject
+            })
+            startOffset = startOffset + rate * 50
+            endOffset = endOffset + rate * 50
+            if (endOffset > totalLength) {
+              endOffset = totalLength
+            }
+          }
+        })
+      })
+      fr.readAsArrayBuffer(this.audioFile)
+    }
   }
 }
 </script>
+<style scoped>
+textarea{
+  outline:none;
+  resize:none
+}
+</style>
