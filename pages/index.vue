@@ -9,10 +9,10 @@
         >
           <v-row justify="center" align="center" class="pt-12">
             <v-spacer />
-            <v-col cols="8" style="text-align: center" class="title">
+            <v-col cols="6" style="text-align: center" class="title">
               {{ audioTitle }}
             </v-col>
-            <v-col cols="2">
+            <v-col cols="3">
               <v-btn
                 rounded
                 color="grey darken-1"
@@ -52,6 +52,7 @@
                   <v-btn
                     rounded
                     color="grey darken-1"
+                    class="ml-3"
                     dark
                     @click="transformAudio"
                   >
@@ -81,8 +82,8 @@
               <!--              <v-textarea v-model="audioAndText[index].text" ></v-textarea>-->
             </v-col>
             <v-col cols="2">
-              <span v-if="!audioAndText[index].transform_num">
-                转换中，请等待
+              <span v-if="!audioAndText[index].transform_num" class="caption">
+                转换中
               </span>
               <div v-else>
                 <v-icon v-if="!audioAndText[index].text" color="red">
@@ -93,7 +94,6 @@
                 </v-icon>
                 <v-chip
                   v-if="!audioAndText[index].text"
-                  rounded
                   color="grey darken-1"
                   dark
                   @click="postBaiduApi(at)"
@@ -487,7 +487,7 @@ export default {
                 length: wav.byteLength,
                 transform_num: 0
               })
-              that.postBackend(that.audioAndText[that.audioAndText.length - 1])
+              that.postBaiduApi(that.audioAndText[that.audioAndText.length - 1])
               // console.log('wav', wav)
               // source.buffer = renderedBuffer
               // console.log('renderedBuffer: ', renderedBuffer)

@@ -5,8 +5,8 @@
       color="white"
       flat
     >
+      <v-spacer />
       <v-avatar
-        class="ml-16 mr-10"
         color="grey darken-1"
         size="36"
       >
@@ -14,10 +14,11 @@
           mdi-music-clef-treble
         </v-icon>
       </v-avatar>
+      <v-spacer />
       <v-tabs
         v-model="tab"
         color="grey darken-1"
-        class="ml-19"
+        class="ml-12"
       >
         <v-tab
           style="font-size: 18px"
@@ -31,7 +32,7 @@
         </v-tab>
       </v-tabs>
       <v-spacer />
-      <v-btn class="ml-4" icon @click="displayHelpCheck = true">
+      <v-btn icon @click="displayHelpCheck = true">
         <v-icon>mdi-help</v-icon>
       </v-btn>
     </v-app-bar>
