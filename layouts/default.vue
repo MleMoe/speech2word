@@ -15,18 +15,16 @@
         </v-icon>
       </v-avatar>
       <v-tabs
+        v-model="tab"
         color="grey darken-1"
         class="ml-19"
       >
         <v-tab
-          v-for="link in links"
-          :key="link"
           style="font-size: 18px"
         >
-          {{ link }}
+          音转文
         </v-tab>
         <v-tab
-          v-if="mobileCheck"
           style="font-size: 18px"
         >
           输出
@@ -88,6 +86,16 @@ export default {
     displayHelpCheck: false,
     mobileCheck: false
   }),
+  computed: {
+    tab: {
+      get () {
+        return this.$store.state.tab
+      },
+      set (val) {
+        this.$store.commit('setTab', val)
+      }
+    }
+  },
   methods: {
     versions () {
       const u = navigator.userAgent

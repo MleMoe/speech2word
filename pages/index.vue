@@ -3,6 +3,34 @@
     <v-row>
       <v-col>
         <v-sheet
+          v-if="this.tab == 1"
+          min-height="80vh"
+          rounded="lg"
+        >
+          <v-row justify="center" align="center" class="pt-12">
+            <v-spacer />
+            <v-col cols="8" style="text-align: center" class="title">
+              {{ audioTitle }}
+            </v-col>
+            <v-col cols="2">
+              <v-btn
+                rounded
+                color="grey darken-1"
+                dark
+                @click="expertDoc"
+              >
+                导出
+              </v-btn>
+            </v-col>
+          </v-row>
+          <v-row justify="center" class="pt-6">
+            <v-col cols="10" class="body-1">
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ content }}
+            </v-col>
+          </v-row>
+        </v-sheet>
+        <v-sheet
+          v-else
           min-height="80vh"
           rounded="lg"
         >
@@ -22,44 +50,12 @@
               <v-row>
                 <v-col>
                   <v-btn
-                    v-if="!audioFile"
-                    rounded
-                    outlined
-                    color="grey darken-1"
-                    dark
-                    @click="transformAudio"
-                  >
-                    转换
-                  </v-btn>
-                  <v-btn
-                    v-else
                     rounded
                     color="grey darken-1"
                     dark
                     @click="transformAudio"
                   >
                     转换
-                  </v-btn>
-                </v-col>
-                <v-col>
-                  <v-btn
-                    v-if="!audioAndText.length"
-                    rounded
-                    outlined
-                    color="grey darken-1"
-                    dark
-                    @click="expertDoc"
-                  >
-                    导出
-                  </v-btn>
-                  <v-btn
-                    v-else
-                    rounded
-                    color="grey darken-1"
-                    dark
-                    @click="expertDoc"
-                  >
-                    导出
                   </v-btn>
                 </v-col>
               </v-row>
@@ -171,7 +167,7 @@ import audioBufferToWav from 'audiobuffer-to-wav'
 import * as Docxtemplater from 'docxtemplater'
 import PizZip from 'pizzip'
 import JSZipUtils from 'jszip-utils'
-// import { saveAs } from 'file-saver'
+import { saveAs } from 'file-saver'
 export default {
   data: () => ({
     audioFile: null,
@@ -182,6 +178,34 @@ export default {
     exportCheck: false,
     token: '24.7c7a79f50db25a9f698ef586ca9891b5.2592000.1604662511.282335-22787298'
   }),
+  computed: {
+    tab: {
+      get () {
+        return this.$store.state.tab
+      },
+      set (val) {
+        this.$store.commit('setTab', val)
+      }
+    },
+    audioTitle: {
+      get () {
+        let title = '暂无内容'
+        if (this.audioFile) {
+          title = this.audioFile.name
+        }
+        return title
+      }
+    },
+    content: {
+      get () {
+        let text = ''
+        for (let i = 0; i < this.audioAndText.length; i++) {
+          text += this.audioAndText[i].text
+        }
+        return text
+      }
+    }
+  },
   mounted () {
     this.audioCtxPlay = new AudioContext()
     // 创建AudioBufferSourceNode对象
@@ -267,11 +291,12 @@ export default {
           mimeType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
         })
         // 将目标文件对象保存为目标类型的文件，并命名
-        // saveAs(out, that.audioFile.name + '.docx')
+        saveAs(out, that.audioFile.name + '.docx')
         const eleLink = document.createElement('a')
         eleLink.download = that.audioFile.name + '.txt'
         eleLink.style.display = 'none'
-        const url = URL.createObjectURL(out)
+        const exportBlob = new Blob([that.content])
+        const url = URL.createObjectURL(exportBlob)
         eleLink.href = url
         // 受浏览器安全策略的因素，动态创建的元素必须添加到浏览器后才能实施点击
         document.body.appendChild(eleLink)
@@ -462,7 +487,7 @@ export default {
                 length: wav.byteLength,
                 transform_num: 0
               })
-              that.postBaiduApi(that.audioAndText[that.audioAndText.length - 1])
+              that.postBackend(that.audioAndText[that.audioAndText.length - 1])
               // console.log('wav', wav)
               // source.buffer = renderedBuffer
               // console.log('renderedBuffer: ', renderedBuffer)
