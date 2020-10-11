@@ -269,7 +269,7 @@ export default {
         // 将目标文件对象保存为目标类型的文件，并命名
         // saveAs(out, that.audioFile.name + '.docx')
         const eleLink = document.createElement('a')
-        eleLink.download = that.audioFile.name + '.docx'
+        eleLink.download = that.audioFile.name + '.txt'
         eleLink.style.display = 'none'
         const url = URL.createObjectURL(out)
         eleLink.href = url
