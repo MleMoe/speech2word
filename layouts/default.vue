@@ -25,6 +25,12 @@
         >
           {{ link }}
         </v-tab>
+        <v-tab
+          v-if="mobileCheck"
+          style="font-size: 18px"
+        >
+          输出
+        </v-tab>
       </v-tabs>
       <v-spacer />
       <v-btn class="ml-4" icon @click="displayHelpCheck = true">
@@ -79,7 +85,34 @@ export default {
     links: [
       '音转文'
     ],
-    displayHelpCheck: false
-  })
+    displayHelpCheck: false,
+    mobileCheck: false
+  }),
+  methods: {
+    versions () {
+      const u = navigator.userAgent
+      // const app = navigator.appVersion
+      return {
+        trident: u.includes('Trident'), // IE内核
+        presto: u.includes('Presto'), // opera内核
+        webKit: u.includes('AppleWebKit'), // 苹果、谷歌内核
+        gecko: u.includes('Gecko') && !u.includes('KHTML'), // 火狐内核
+        mobile: !!u.match(/AppleWebKit.*Mobile.*/), // 是否为移动终端
+        ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), // ios终端
+        android: u.includes('Android') || u.includes('Adr'), // android终端
+        iPhone: u.includes('iPhone'), // 是否为iPhone或者QQHD浏览器
+        iPad: u.includes('iPad'), // 是否iPad
+        webApp: !u.includes('Safari'), // 是否web应该程序，没有头部与底部
+        weixin: u.includes('MicroMessenger'), // 是否微信 （2015-01-22新增）
+        qq: u.match(/\sQQ/i) === ' qq' // 是否QQ
+      }
+    },
+    isMobile () {
+      const v = this.versions()
+      if (v.mobile || v.android || v.ios) {
+        this.mobileCheck = true
+      }
+    }
+  }
 }
 </script>

@@ -19,7 +19,7 @@ export default {
     ]
   },
   router: {
-    base: '/speech2word/'
+    base: '/'
   },
   generate: {
     dir: 'docs'

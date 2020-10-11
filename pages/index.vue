@@ -95,15 +95,15 @@
                 <v-icon v-else color="green">
                   mdi-check
                 </v-icon>
-                <v-btn
+                <v-chip
                   v-if="!audioAndText[index].text"
                   rounded
                   color="grey darken-1"
                   dark
-                  small
-                  @click="postBaiduApi(at)">
+                  @click="postBaiduApi(at)"
+                >
                   重转
-                </v-btn>
+                </v-chip>
                 <span v-else>
                   完成
                 </span>
