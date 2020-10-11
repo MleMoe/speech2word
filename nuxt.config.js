@@ -21,9 +21,9 @@ export default {
   router: {
     base: '/speech2word/'
   },
-  // generate: {speech2word
-  //   dir: 'docs'
-  // },
+  generate: {
+    dir: 'docs'
+  },
   // Global CSS (https://go.nuxtjs.dev/config-css)
   css: [
   ],
@@ -95,8 +95,5 @@ export default {
   // Build Configuration (https://go.nuxtjs.dev/config-build)
   build: {
     vendor: ['axios']
-  },
-  generate: {
-    dir: 'docs'
   }
 }

@@ -22,8 +22,18 @@
               <v-row>
                 <v-col>
                   <v-btn
+                    v-if="!audioFile"
                     rounded
                     outlined
+                    color="grey darken-1"
+                    dark
+                    @click="transformAudio"
+                  >
+                    转换
+                  </v-btn>
+                  <v-btn
+                    v-else
+                    rounded
                     color="grey darken-1"
                     dark
                     @click="transformAudio"
@@ -33,6 +43,17 @@
                 </v-col>
                 <v-col>
                   <v-btn
+                    v-if="!audioAndText.length"
+                    rounded
+                    outlined
+                    color="grey darken-1"
+                    dark
+                    @click="expertDoc"
+                  >
+                    导出
+                  </v-btn>
+                  <v-btn
+                    v-else
                     rounded
                     color="grey darken-1"
                     dark
@@ -74,9 +95,15 @@
                 <v-icon v-else color="green">
                   mdi-check
                 </v-icon>
-                <v-chip v-if="!audioAndText[index].text" @click="postBaiduApi(at)">
+                <v-btn
+                  v-if="!audioAndText[index].text"
+                  rounded
+                  color="grey darken-1"
+                  dark
+                  small
+                  @click="postBaiduApi(at)">
                   重转
-                </v-chip>
+                </v-btn>
                 <span v-else>
                   完成
                 </span>
@@ -292,9 +319,9 @@ export default {
       return window.btoa(binary)
     },
     postBackend (audioAndText) {
-      if (audioAndText.transform_num) {
-        audioAndText.transform_num = 0
-      }
+      // if (audioAndText.transform_num) {
+      //   audioAndText.transform_num = 0
+      // }
       // const config = {
       //   headers: { 'Content-Type': 'audio/wav;rate=16000' }
       // }
