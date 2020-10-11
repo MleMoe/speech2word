@@ -19,14 +19,14 @@
         class="ml-19"
       >
         <v-tab
-          style="font-size: 18px"
           v-for="link in links"
           :key="link"
+          style="font-size: 18px"
         >
           {{ link }}
         </v-tab>
       </v-tabs>
-      <v-spacer/>
+      <v-spacer />
       <v-btn class="ml-4" icon @click="displayHelpCheck = true">
         <v-icon>mdi-help</v-icon>
       </v-btn>
@@ -45,11 +45,11 @@
             </v-card-title>
             <v-card-text class="subtitle pa-10" style="font-size: 16px">
               1. 点击<strong>文件输入框</strong>，选择音频文件输入。<br>
-              2. 点击<strong>转换按钮</strong>，进行语音转文本工作。语音分段处理，每段50秒。等待片刻后即完成转换。若有未转换者，可手动点击<strong>重转</strong>。<br>
+              2. 点击<strong>转换按钮</strong>，进行语音转文本工作。语音分段转换，每段50秒。若有未转换者，可手动点击<strong>重转</strong>。<br>
               3. 转换完成后，文本显示在文本框中，用户可自行<strong>修改</strong>。文本框左侧有语音播放按钮，可<strong>播放</strong>语音对照修改。<br>
               4. 修改完成，可点击<strong>导出</strong>word文档。<br>
               <br>
-              <strong>由于使用代理，转换需要时间，请稍微等待10秒左右。</strong>
+              <strong>由于使用代理，转换需要时间，请稍微等待。</strong>
             </v-card-text>
             <v-card-actions>
               <v-spacer />
@@ -66,7 +66,9 @@
       </v-row>
     </v-main>
     <v-footer padless>
-      <v-spacer/><span>中国传媒大学 文化大数据Lab &copy;{{ new Date().getFullYear() }}版权所有</span><v-spacer/>
+      <v-spacer />
+      <span>中国传媒大学 文化大数据Lab &copy;{{ new Date().getFullYear() }}版权所有</span>
+      <v-spacer />
     </v-footer>
   </v-app>
 </template>

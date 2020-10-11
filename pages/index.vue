@@ -144,7 +144,7 @@ import audioBufferToWav from 'audiobuffer-to-wav'
 import * as Docxtemplater from 'docxtemplater'
 import PizZip from 'pizzip'
 import JSZipUtils from 'jszip-utils'
-import { saveAs } from 'file-saver'
+// import { saveAs } from 'file-saver'
 export default {
   data: () => ({
     audioFile: null,
@@ -240,7 +240,18 @@ export default {
           mimeType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
         })
         // 将目标文件对象保存为目标类型的文件，并命名
-        saveAs(out, that.audioFile.name + '.docx')
+        // saveAs(out, that.audioFile.name + '.docx')
+        const eleLink = document.createElement('a')
+        eleLink.download = that.audioFile.name + '.docx'
+        eleLink.style.display = 'none'
+        const url = URL.createObjectURL(out)
+        eleLink.href = url
+        // 受浏览器安全策略的因素，动态创建的元素必须添加到浏览器后才能实施点击
+        document.body.appendChild(eleLink)
+        // 触发点击
+        eleLink.click()
+        // 然后移除
+        document.body.removeChild(eleLink)
       })
     },
     transformAudio () {
@@ -248,6 +259,7 @@ export default {
       if (this.transformCheck) {
         return
       }
+      this.audioAndText = []
       this.getFile()
     },
     playAudio (sp) {
@@ -279,10 +291,48 @@ export default {
       }
       return window.btoa(binary)
     },
-    postBaiduApi (audioAndText) {
+    postBackend (audioAndText) {
       if (audioAndText.transform_num) {
         audioAndText.transform_num = 0
       }
+      // const config = {
+      //   headers: { 'Content-Type': 'audio/wav;rate=16000' }
+      // }
+      const payload = {
+        format: 'wav',
+        rate: 16000,
+        channel: 1,
+        cuid: 'a6:83:e7:5a:57:64',
+        speech: audioAndText.audio,
+        len: audioAndText.length,
+        dev_pid: 1537,
+        token: '24.7c7a79f50db25a9f698ef586ca9891b5.2592000.1604662511.282335-22787298'
+      }
+      this.$axios
+        .post('http://127.0.0.1:5002/audio', payload)
+        .then((res) => {
+          // eslint-disable-next-line eqeqeq
+          if (res.status == '200') {
+            // console.log('success, ', res)
+            audioAndText.text = res.data.data.result[0]
+            audioAndText.transform_num += 1
+            // if (!res.data.result) {
+            //   // console.log(res)
+            // }
+          } else {
+            audioAndText.transform_num += 1
+            // console.log(res)
+          }
+        })
+        .catch((err) => {
+          audioAndText.transform_num += 1
+          console.log(err)
+        })
+    },
+    postBaiduApi (audioAndText) {
+      // if (audioAndText.transform_num) {
+      //   audioAndText.transform_num = 0
+      // }
       const config = {
         headers: { 'Content-Type': 'audio/wav;rate=16000' }
       }
@@ -381,7 +431,7 @@ export default {
                   source: sourcePlay,
                   play: 0
                 },
-                text: null,
+                text: '',
                 length: wav.byteLength,
                 transform_num: 0
               })
