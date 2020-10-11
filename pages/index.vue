@@ -64,18 +64,23 @@
               <!--              <v-textarea v-model="audioAndText[index].text" ></v-textarea>-->
             </v-col>
             <v-col cols="2">
-              <v-icon v-if="!audioAndText[index].text" color="red">
-                mdi-close
-              </v-icon>
-              <v-icon v-else color="green">
-                mdi-check
-              </v-icon>
-              <v-chip v-if="!audioAndText[index].text" @click="postBaiduApi(at)">
-                重转
-              </v-chip>
-              <span v-else>
-                完成
+              <span v-if="!audioAndText[index].transform_num">
+                转换中，请等待
               </span>
+              <div v-else>
+                <v-icon v-if="!audioAndText[index].text" color="red">
+                  mdi-close
+                </v-icon>
+                <v-icon v-else color="green">
+                  mdi-check
+                </v-icon>
+                <v-chip v-if="!audioAndText[index].text" @click="postBaiduApi(at)">
+                  重转
+                </v-chip>
+                <span v-else>
+                  完成
+                </span>
+              </div>
             </v-col>
           </v-row>
         </v-sheet>
@@ -235,7 +240,7 @@ export default {
           mimeType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
         })
         // 将目标文件对象保存为目标类型的文件，并命名
-        saveAs(out, '语音转文本.docx')
+        saveAs(out, that.audioFile.name + '.docx')
       })
     },
     transformAudio () {
@@ -275,6 +280,9 @@ export default {
       return window.btoa(binary)
     },
     postBaiduApi (audioAndText) {
+      if (audioAndText.transform_num) {
+        audioAndText.transform_num = 0
+      }
       const config = {
         headers: { 'Content-Type': 'audio/wav;rate=16000' }
       }
@@ -289,20 +297,23 @@ export default {
         token: '24.7c7a79f50db25a9f698ef586ca9891b5.2592000.1604662511.282335-22787298'
       })
       this.$axios
-        .post('/transform', payload, config)
+        .post('https://cors-anywhere.herokuapp.com/http://vop.baidu.com/server_api', payload, config)
         .then((res) => {
           // eslint-disable-next-line eqeqeq
           if (res.status == '200') {
             // console.log('success, ', res.data.result)
             audioAndText.text = res.data.result
-            if (!res.data.result) {
-              // console.log(res)
-            }
+            audioAndText.transform_num += 1
+            // if (!res.data.result) {
+            //   // console.log(res)
+            // }
           } else {
+            audioAndText.transform_num += 1
             // console.log(res)
           }
         })
         .catch((err) => {
+          audioAndText.transform_num += 1
           console.log(err)
         })
     },
@@ -371,7 +382,8 @@ export default {
                   play: 0
                 },
                 text: null,
-                length: wav.byteLength
+                length: wav.byteLength,
+                transform_num: 0
               })
               that.postBaiduApi(that.audioAndText[that.audioAndText.length - 1])
               // console.log('wav', wav)

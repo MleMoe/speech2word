@@ -48,6 +48,8 @@
               2. 点击<strong>转换按钮</strong>，进行语音转文本工作。语音分段处理，每段50秒。等待片刻后即完成转换。若有未转换者，可手动点击<strong>重转</strong>。<br>
               3. 转换完成后，文本显示在文本框中，用户可自行<strong>修改</strong>。文本框左侧有语音播放按钮，可<strong>播放</strong>语音对照修改。<br>
               4. 修改完成，可点击<strong>导出</strong>word文档。<br>
+              <br>
+              <strong>由于使用代理，转换需要时间，请稍微等待10秒左右。</strong>
             </v-card-text>
             <v-card-actions>
               <v-spacer />
