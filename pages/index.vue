@@ -17,6 +17,7 @@
                 rounded
                 color="grey darken-1"
                 dark
+                style="height:32px"
                 @click="expertDoc"
               >
                 导出
@@ -54,6 +55,7 @@
                     color="grey darken-1"
                     class="ml-4"
                     dark
+                    style="height:32px"
                     @click="transformAudio"
                   >
                     转换
@@ -81,14 +83,13 @@
               />
               <!--              <v-textarea v-model="audioAndText[index].text" ></v-textarea>-->
             </v-col>
-            <v-col cols="3">
-              <div v-if="!audioAndText[index].transform_num">
-                <v-icon>
-                  mdi-sync
-                </v-icon>
-                <span>
-                  等待
-                </span>
+            <v-col cols="2">
+              <div v-if="!audioAndText[index].transform_num" class="spinner">
+                <div class="rect1"></div>
+                <div class="rect2"></div>
+                <div class="rect3"></div>
+                <div class="rect4"></div>
+                <div class="rect5"></div>
               </div>
               <div v-else>
                 <v-icon v-if="!audioAndText[index].text" color="red">
@@ -525,5 +526,49 @@ export default {
 textarea{
   outline:none;
   resize:none
+}
+.spinner {
+  margin: 50px auto;
+  width: 30px;
+  height: 40px;
+  text-align: center;
+  font-size: 8px;
+}
+.spinner > div {
+  background-color: #757575;
+  height: 100%;
+  width: 3px;
+  display: inline-block;
+  -webkit-animation: stretchdelay 1.2s infinite ease-in-out;
+  animation: stretchdelay 1.2s infinite ease-in-out;
+}
+.spinner .rect2 {
+  -webkit-animation-delay: -1.1s;
+  animation-delay: -1.1s;
+}
+.spinner .rect3 {
+  -webkit-animation-delay: -1.0s;
+  animation-delay: -1.0s;
+}
+.spinner .rect4 {
+  -webkit-animation-delay: -0.9s;
+  animation-delay: -0.9s;
+}
+.spinner .rect5 {
+  -webkit-animation-delay: -0.8s;
+  animation-delay: -0.8s;
+}
+@-webkit-keyframes stretchdelay {
+  0%, 40%, 100% { -webkit-transform: scaleY(0.4) }
+  20% { -webkit-transform: scaleY(1.0) }
+}
+@keyframes stretchdelay {
+  0%, 40%, 100% {
+    transform: scaleY(0.4);
+    -webkit-transform: scaleY(0.4);
+  }  20% {
+    transform: scaleY(1.0);
+    -webkit-transform: scaleY(1.0);
+  }
 }
 </style>
