@@ -15,7 +15,7 @@ export default {
       { hid: 'description', name: 'description', content: '' }
     ],
     link: [
-      { rel: 'icon', type: 'image/x-icon', href: '/logo.png' }
+      { rel: 'icon', type: 'image/x-icon', href: '/speech2word/logo.png' }
     ]
   },
   router: {
