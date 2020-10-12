@@ -55,6 +55,7 @@
               4. 修改完成，可点击<strong>输出</strong>页，在<strong>导出</strong>word文档。<br>
               <br>
               <strong>由于使用代理，转换需要时间，请稍微等待。</strong>
+              <strong>支持格式：m4a、m4r、mp3、wav、flac、ogg、acc、opus</strong>
             </v-card-text>
             <v-card-actions>
               <v-spacer />

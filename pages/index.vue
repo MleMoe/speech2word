@@ -53,7 +53,7 @@
                   <v-btn
                     rounded
                     color="grey darken-1"
-                    class="ml-4"
+                    class="ml-6"
                     dark
                     style="height:32px"
                     @click="transformAudio"
@@ -168,6 +168,34 @@
         </v-card>
       </v-dialog>
     </v-row>
+    <v-row justify="center">
+      <v-dialog
+        v-model="typeCheck"
+        persistent
+        max-width="290"
+      >
+        <v-card>
+          <v-card-title class="title">
+            文件格式不符合要求
+          </v-card-title>
+          <v-card-text>
+            支持格式：m4a、m4r、mp3、wav、flac、ogg、acc、opus
+          </v-card-text>
+
+          <v-card-actions>
+            <v-spacer />
+
+            <v-btn
+              color="green darken-1"
+              text
+              @click="typeCheck = false"
+            >
+              确定
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+    </v-row>
   </v-container>
 </template>
 
@@ -185,6 +213,7 @@ export default {
     audioCtxPlay: null,
     transformCheck: false,
     exportCheck: false,
+    typeCheck: false,
     token: '24.7c7a79f50db25a9f698ef586ca9891b5.2592000.1604662511.282335-22787298'
   }),
   computed: {
@@ -242,6 +271,17 @@ export default {
     // this.client = new AipSpeechClient(APP_ID, API_KEY, SECRET_KEY)
   },
   methods: {
+    audioFormatCheck (name) {
+      const fileType = name.split('.').pop()
+      const types = ['m4a', 'm4r', 'mp3', 'wav', 'flac', 'ogg', 'acc', 'opus']
+      // console.log(types, fileType, name.split('.'), name)
+      // console.log(types.includes(fileType))
+      if (!types.includes(fileType)) {
+        this.typeCheck = true
+        return false
+      }
+      return true
+    },
     expertDoc () {
       let flag = true
       for (let i = 0; i < this.audioAndText; i++) {
@@ -264,7 +304,6 @@ export default {
         if (error) {
           throw error
         }
-
         // 创建一个PizZip实例，内容为模板的内容
         const zip = new PizZip(content)
         // 创建并加载docxtemplater实例对象
@@ -278,7 +317,6 @@ export default {
           title: that.audioFile.name,
           content: text
         })
-
         try {
           // 用模板变量的值替换所有模板变量
           doc.render()
@@ -318,6 +356,9 @@ export default {
     transformAudio () {
       this.transformCheck = !this.audioFile
       if (this.transformCheck) {
+        return
+      }
+      if (!this.audioFormatCheck(this.audioFile.name)) {
         return
       }
       this.audioAndText = []
@@ -429,6 +470,7 @@ export default {
         })
     },
     getFile () {
+      // console.log(this.audioFile)
       const fr = new FileReader()
       let arrBuffer = null
       let audioBuffer = null
@@ -451,6 +493,12 @@ export default {
           // console.log('length: ', totalLength)
           let startOffset = 0
           let endOffset = rate * 50
+          // 2400000 422848 0 2400000
+          if (endOffset > totalLength) {
+            endOffset = totalLength
+          }
+          // console.log(endOffset, totalLength, startOffset, endOffset)
+          // console.log(endOffset <= totalLength && startOffset < endOffset)
           while (endOffset <= totalLength && startOffset < endOffset) {
             // 3秒对应的帧数
             const frameCount = endOffset - startOffset
@@ -466,17 +514,21 @@ export default {
               audioBuffer.copyFromChannel(anotherArray, channel, startOffset)
               newAudioBuffer.copyToChannel(anotherArray, channel, offset)
             }
+            // console.log('切分结束')
             const offlineCtx = new OfflineAudioContext(1, 16000 * 50, 16000)
             const source2 = offlineCtx.createBufferSource()
             source2.buffer = newAudioBuffer
             source2.connect(offlineCtx.destination)
             source2.start()
             // source.loop = true;
+            // console.log('转换开始')
             offlineCtx.startRendering().then(function (renderedBuffer) {
               // renderedBuffer;
               // 设置AudioBufferSourceNode对象的buffer为复制的n秒AudioBuffer对象
               const wav = audioBufferToWav(renderedBuffer)
+              // console.log('wav: ', wav)
               const sph = that.transformArrayBufferToBase64(wav)
+              // console.log('sph: ', sph)
               const audioCtxPlay = new AudioContext()
               // 创建AudioBufferSourceNode对象
               const sourcePlay = audioCtxPlay.createBufferSource()
@@ -496,6 +548,7 @@ export default {
                 length: wav.byteLength,
                 transform_num: 0
               })
+              // console.log('开始请求api')
               that.postBackend(that.audioAndText[that.audioAndText.length - 1])
               // console.log('wav', wav)
               // source.buffer = renderedBuffer
@@ -515,6 +568,7 @@ export default {
               endOffset = totalLength
             }
           }
+          // console.log('结束')
         })
       })
       fr.readAsArrayBuffer(this.audioFile)
@@ -529,15 +583,15 @@ textarea{
 }
 .spinner {
   margin: 50px auto;
-  width: 30px;
-  height: 40px;
+  width: 25px;
+  height: 30px;
   text-align: center;
   font-size: 8px;
 }
 .spinner > div {
   background-color: #757575;
   height: 100%;
-  width: 3px;
+  width: 2px;
   display: inline-block;
   -webkit-animation: stretchdelay 1.2s infinite ease-in-out;
   animation: stretchdelay 1.2s infinite ease-in-out;
