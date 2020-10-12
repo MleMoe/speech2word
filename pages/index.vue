@@ -52,7 +52,7 @@
                   <v-btn
                     rounded
                     color="grey darken-1"
-                    class="ml-3"
+                    class="ml-4"
                     dark
                     @click="transformAudio"
                   >
@@ -64,7 +64,7 @@
           </v-row>
           <v-row v-for="(at, index) in audioAndText" :key="index" justify="center" align="center">
             <v-col cols="2">
-              <v-row class="pr-10" justify="end">
+              <v-row class="pr-5" justify="end">
                 <v-icon v-if="at.source_play.play == 0" @click="playAudio(at.source_play)">
                   mdi-play
                 </v-icon>
@@ -81,10 +81,15 @@
               />
               <!--              <v-textarea v-model="audioAndText[index].text" ></v-textarea>-->
             </v-col>
-            <v-col cols="2">
-              <span v-if="!audioAndText[index].transform_num" class="caption">
-                转换中
-              </span>
+            <v-col cols="3">
+              <div v-if="!audioAndText[index].transform_num">
+                <v-icon>
+                  mdi-sync
+                </v-icon>
+                <span>
+                  等待
+                </span>
+              </div>
               <div v-else>
                 <v-icon v-if="!audioAndText[index].text" color="red">
                   mdi-close
@@ -92,14 +97,17 @@
                 <v-icon v-else color="green">
                   mdi-check
                 </v-icon>
-                <v-chip
+                <v-btn
                   v-if="!audioAndText[index].text"
+                  icon
                   color="grey darken-1"
                   dark
                   @click="postBackend(at)"
                 >
-                  重转
-                </v-chip>
+                  <v-icon>
+                    mdi-sync
+                  </v-icon>
+                </v-btn>
                 <span v-else>
                   完成
                 </span>
@@ -249,7 +257,7 @@ export default {
       }
       const that = this
       // 读取并获得模板文件的二进制内容
-      JSZipUtils.getBinaryContent('/speechToDocx.docx', function (error, content) {
+      JSZipUtils.getBinaryContent('/speech2word/speechToDocx.docx', function (error, content) {
         // model.docx是模板。我们在导出的时候，会根据此模板来导出对应的数据
         // 抛出异常
         if (error) {
@@ -291,19 +299,19 @@ export default {
           mimeType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
         })
         // 将目标文件对象保存为目标类型的文件，并命名
-        saveAs(out, that.audioFile.name + '.docx')
-        const eleLink = document.createElement('a')
-        eleLink.download = that.audioFile.name + '.txt'
-        eleLink.style.display = 'none'
-        const exportBlob = new Blob([that.content])
-        const url = URL.createObjectURL(exportBlob)
-        eleLink.href = url
-        // 受浏览器安全策略的因素，动态创建的元素必须添加到浏览器后才能实施点击
-        document.body.appendChild(eleLink)
-        // 触发点击
-        eleLink.click()
-        // 然后移除
-        document.body.removeChild(eleLink)
+        saveAs(out, that.audioFile.name.split('.')[0] + '.docx')
+        // const eleLink = document.createElement('a')
+        // eleLink.download = that.audioFile.name + '.txt'
+        // eleLink.style.display = 'none'
+        // const exportBlob = new Blob([that.content])
+        // const url = URL.createObjectURL(exportBlob)
+        // eleLink.href = url
+        // // 受浏览器安全策略的因素，动态创建的元素必须添加到浏览器后才能实施点击
+        // document.body.appendChild(eleLink)
+        // // 触发点击
+        // eleLink.click()
+        // // 然后移除
+        // document.body.removeChild(eleLink)
       })
     },
     transformAudio () {
@@ -344,9 +352,9 @@ export default {
       return window.btoa(binary)
     },
     postBackend (audioAndText) {
-      // if (audioAndText.transform_num) {
-      //   audioAndText.transform_num = 0
-      // }
+      if (audioAndText.transform_num) {
+        audioAndText.transform_num = 0
+      }
       // const config = {
       //   headers: { 'Content-Type': 'audio/wav;rate=16000' }
       // }
@@ -382,9 +390,9 @@ export default {
         })
     },
     postBaiduApi (audioAndText) {
-      // if (audioAndText.transform_num) {
-      //   audioAndText.transform_num = 0
-      // }
+      if (audioAndText.transform_num) {
+        audioAndText.transform_num = 0
+      }
       const config = {
         headers: { 'Content-Type': 'audio/wav;rate=16000' }
       }
