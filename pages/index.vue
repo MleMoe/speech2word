@@ -96,7 +96,7 @@
                   v-if="!audioAndText[index].text"
                   color="grey darken-1"
                   dark
-                  @click="postBaiduApi(at)"
+                  @click="postBackend(at)"
                 >
                   重转
                 </v-chip>
@@ -361,7 +361,7 @@ export default {
         token: '24.7c7a79f50db25a9f698ef586ca9891b5.2592000.1604662511.282335-22787298'
       }
       this.$axios
-        .post('http://127.0.0.1:5002/audio', payload)
+        .post('https://api.yingshinet.com/audio', payload)
         .then((res) => {
           // eslint-disable-next-line eqeqeq
           if (res.status == '200') {
@@ -487,7 +487,7 @@ export default {
                 length: wav.byteLength,
                 transform_num: 0
               })
-              that.postBaiduApi(that.audioAndText[that.audioAndText.length - 1])
+              that.postBackend(that.audioAndText[that.audioAndText.length - 1])
               // console.log('wav', wav)
               // source.buffer = renderedBuffer
               // console.log('renderedBuffer: ', renderedBuffer)
