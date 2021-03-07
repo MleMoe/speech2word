@@ -18,9 +18,9 @@ export default {
       { rel: 'icon', type: 'image/x-icon', href: '/speech2word/logo.png' }
     ]
   },
-  router: {
-    base: '/speech2word/'
-  },
+  // router: {
+  //   base: '/speech2word/'
+  // },
   generate: {
     dir: 'docs'
   },
