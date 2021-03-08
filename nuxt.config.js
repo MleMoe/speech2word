@@ -15,14 +15,14 @@ export default {
       { hid: 'description', name: 'description', content: '' }
     ],
     link: [
-      { rel: 'icon', type: 'image/x-icon', href: '/speech2word/logo.png' }
+      { rel: 'icon', type: 'image/x-icon', href: '/logo.png' }
     ]
   },
   // router: {
   //   base: '/speech2word/'
   // },
   generate: {
-    dir: 'docs'
+    dir: 'dist'
   },
   // Global CSS (https://go.nuxtjs.dev/config-css)
   css: [
@@ -46,32 +46,32 @@ export default {
   // Modules (https://go.nuxtjs.dev/config-modules)
   modules: [
     // https://go.nuxtjs.dev/axios
-    '@nuxtjs/axios',
-    '@nuxtjs/proxy'
+    '@nuxtjs/axios'
+    // '@nuxtjs/proxy'
   ],
 
   // Axios module configuration (https://go.nuxtjs.dev/config-axios)
-  axios: {
-    proxy: true
-  },
-  proxy: {
-    '/token': {
-      target: 'https://aip.baidubce.com/oauth/2.0/token',
-      changeOrigin: true,
-      secure: false,
-      pathRewrite: {
-        '^/api': '/'
-      }
-    },
-    '/transform': {
-      target: 'http://vop.baidu.com/server_api',
-      changeOrigin: true,
-      secure: false,
-      pathRewrite: {
-        '^/api': '/'
-      }
-    }
-  },
+  // axios: {
+  //   proxy: true
+  // },
+  // proxy: {
+  //   '/token': {
+  //     target: 'https://aip.baidubce.com/oauth/2.0/token',
+  //     changeOrigin: true,
+  //     secure: false,
+  //     pathRewrite: {
+  //       '^/api': '/'
+  //     }
+  //   },
+  //   '/transform': {
+  //     target: 'http://vop.baidu.com/server_api',
+  //     changeOrigin: true,
+  //     secure: false,
+  //     pathRewrite: {
+  //       '^/api': '/'
+  //     }
+  //   }
+  // },
 
   // Vuetify module configuration (https://go.nuxtjs.dev/config-vuetify)
   vuetify: {
